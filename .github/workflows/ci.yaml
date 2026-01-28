@@ -1,0 +1,38 @@
+name: GitFlow CI/CD Dispatcher
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - release
+      - 'feature/**'
+
+jobs:
+  # 1. PRODUCTION (master) - Calls ./production.yaml
+  production_deployment:
+    name: 🚀 Production Deploy (Master)
+    if: github.ref == 'refs/heads/master'
+    uses: ./.github/workflows/production.yaml
+    secrets: inherit
+
+  # 2. STAGING (develop) - Calls ./staging.yaml
+  staging_ci:
+    name: 📦 Staging CI (Develop Branch)
+    if: github.ref == 'refs/heads/develop'
+    uses: ./.github/workflows/staging.yaml
+    secrets: inherit
+
+  # 3. RELEASE / PRE-PRODUCTION (release/*) - Calls ./release.yaml
+  release_ci:
+    name: 📢 Release/Pre-Prod CI
+    if: startsWith(github.ref, 'refs/heads/release')
+    uses: ./.github/workflows/release.yaml
+    secrets: inherit
+
+  # 4. DEVELOPMENT (feature/*) - Calls ./development.yaml
+  development_ci:
+    name: 🛠️ Feature/Development CI
+    if: startsWith(github.ref, 'refs/heads/feature/')
+    uses: ./.github/workflows/development.yaml
+    secrets: inherit
