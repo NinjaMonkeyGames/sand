@@ -1,3 +1,10 @@
+# [1.0.0-beta.3](https://github.com/NinjaMonkeyGames/sand/compare/v1.0.0-beta.2...v1.0.0-beta.3) (2026-01-31)
+
+
+### Features
+
+* **core:** test gitflow run 2 ([c7ac40e](https://github.com/NinjaMonkeyGames/sand/commit/c7ac40e2565158cdfa772eb0a78440b99e9f0606)), closes [#0](https://github.com/NinjaMonkeyGames/sand/issues/0) [#0](https://github.com/NinjaMonkeyGames/sand/issues/0) [#0](https://github.com/NinjaMonkeyGames/sand/issues/0) [#0](https://github.com/NinjaMonkeyGames/sand/issues/0)
+
 # [1.0.0-beta.2](https://github.com/NinjaMonkeyGames/sand/compare/v1.0.0-beta.1...v1.0.0-beta.2) (2026-01-31)
 
 
