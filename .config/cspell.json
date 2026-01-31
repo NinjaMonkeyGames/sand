@@ -1,0 +1,27 @@
+{
+  "version": "0.2",
+  "language": "en-gb",
+  "words": [
+    "Allman",
+    "commitlint",
+    "commonmark",
+    "davidanson",
+    "Driessen",
+    "EDITMSG",
+    "ghaction",
+    "gpgsign",
+    "joshbolduc",
+    "keyid",
+    "linters",
+    "noncommercially",
+    "println",
+    "signingkey",
+    "Tileset",
+    "wmaurer",
+    "yzhang",
+    "zokkissoftwareschmiede"
+  ],
+  "ignorePaths": [
+    "node_modules/**"
+  ]
+}
