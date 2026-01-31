@@ -21,17 +21,16 @@ jobs:
     uses: ./.github/workflows/markdownlint.yaml
     secrets: inherit
       
-  # Job 3: NEW JOB - Smoke Tests Call
+  # Job 3: Smoke Tests Check
   call_smoke_tests:
     name: 💨 Run Smoke Tests
     uses: ./.github/workflows/smoke-tests.yaml
     secrets: inherit
 
-  # Job 4: Core Environment Steps (Staging/Pre-Prod)
+  # Job 4: Core Environment Steps
   release_checks:
     name: Release Final Checks
     runs-on: ubuntu-latest
-    # NOW DEPENDS on all three quality/test jobs
     needs: [call_commitlint, call_markdownlint, call_smoke_tests]
     environment: release
 
@@ -39,24 +38,21 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 
       - name: 📢 Report Successful Release Call
         run: |
           echo "#################################################"
           echo "## RELEASE/PRE-PROD WORKFLOW CALLED!          ##"
           echo "#################################################"
-          echo "All linting and smoke tests passed. Running final pre-production checks."
+          echo "All linting and smoke tests passed. Running final checks."
 
       - name: Placeholder for Release Checks
         run: |
           echo "Starting vulnerability and security scan..."
-          # ./scripts/run-security-scan.sh
           echo "Creating final release artifact..."
-          # npm run build:release
 
   # Job 5: Call Release Engine (Pre-release / Dry Run)
   call_release_engine:
-    name: 🔍 Validate Release Syntax (Pre-release)
+    name: 🧪 Validate Release Syntax (Pre-release)
     needs: [release_checks]
     uses: ./.github/workflows/semantic-release.yaml
     with:
