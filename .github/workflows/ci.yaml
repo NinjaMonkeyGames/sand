@@ -7,6 +7,9 @@ on:
       - develop
       - release
       - 'feature/**'
+  pull_request:
+    branches:
+      - master
 
 jobs:
   # 1. PRODUCTION (master) - Calls ./production.yaml
