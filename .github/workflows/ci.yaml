@@ -38,7 +38,12 @@ jobs:
 
       - name: Run Deployment Logic
         run: |
-          elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
+          echo "🚀 Starting deployment sequence..."
+          # Your deployment commands (e.g., docker push, terraform apply, npm run deploy) would go here.
+          echo "Deployment successful."  deploy-development:
+    
+
+          if: needs.determine-env.outputs.target_env == 'development'
           uses: ./.github/workflows/development.yaml
           secrets: inherit
 
