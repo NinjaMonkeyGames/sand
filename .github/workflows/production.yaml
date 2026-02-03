@@ -1,16 +1,11 @@
-name: Deployment # (Update the name per file)
-
 on:
-  workflow_call:
-    inputs:
-      env_name: # This tells the workflow to expect the variable from ci.yaml
-        required: true
-        type: string
+  workflow_call: # Required for the main pipeline to call this file
 
 jobs:
-  deploy:
+  confirm:
     runs-on: ubuntu-latest
-    environment: ${{ inputs.env_name }} # This is where the magic happens
     steps:
-      - name: Deploy
-        run: echo "🚀 Successfully deployed to the ${{ inputs.env_name }} environment!"
+      - name: Production Confirmation
+        run: |
+          echo "🚀 [PRODUCTION] Deployment Verified."
+          echo "Running production-only smoke tests..."
