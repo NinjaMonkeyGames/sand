@@ -1,0 +1,66 @@
+name: CI Dispatcher
+
+on:
+  push:
+    # We must include 'release' here so GitHub listens for pushes to it
+    branches: [ master, develop, staging, release, "feature/**" ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'development'
+        type: choice
+        options: [development, staging, release, production]
+
+jobs:
+  determine_env:
+    runs-on: ubuntu-latest
+    outputs:
+      target_env: ${{ steps.set_env.outputs.target_env }}
+    steps:
+      - id: set_env
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "target_env=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref_name }}" == "master" ]]; then
+            echo "target_env=production" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref_name }}" == "release" ]]; then
+            # Logic: When on release branch, we target the staging environment
+            echo "target_env=staging" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref_name }}" == "staging" ]]; then
+            echo "target_env=staging" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref_name }}" == "develop" ]]; then
+            echo "target_env=development" >> $GITHUB_OUTPUT
+          else
+            # This handles all feature/** branches
+            echo "target_env=development" >> $GITHUB_OUTPUT
+          fi
+
+  deploy_dev:
+    needs: determine_env
+    if: needs.determine_env.outputs.target_env == 'development'
+    uses: ./.github/workflows/development.yaml
+    with:
+      env_name: development
+
+  deploy_staging:
+    needs: determine_env
+    if: needs.determine_env.outputs.target_env == 'staging'
+    uses: ./.github/workflows/staging.yaml
+    with:
+      env_name: staging
+
+  deploy_release:
+    needs: determine_env
+    if: needs.determine_env.outputs.target_env == 'release'
+    uses: ./.github/workflows/release.yaml
+    with:
+      env_name: release
+
+  deploy_production:
+    needs: determine_env
+    if: needs.determine_env.outputs.target_env == 'production'
+    uses: ./.github/workflows/production.yaml
+    with:
+      env_name: production

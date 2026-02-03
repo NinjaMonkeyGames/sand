@@ -60,12 +60,3 @@ Temporary Items
 
 # GMRT build directory
 Build
-
-# GameMaker leftover backup files
-*.old.yy
-*.old
-*.old.*
-
-#nodejs
-
-/node_modules
