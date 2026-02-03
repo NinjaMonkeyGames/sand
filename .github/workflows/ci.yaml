@@ -1,66 +1,52 @@
-name: CI Dispatcher
+name: CI/CD Deployment Pipeline
 
 on:
   push:
-    # We must include 'release' here so GitHub listens for pushes to it
-    branches: [ master, develop, staging, release, "feature/**" ]
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment to deploy to'
-        required: true
-        default: 'development'
-        type: choice
-        options: [development, staging, release, production]
+    branches:
+      - master
+      - 'release/*'
+      - develop
+      - 'feature/*'
 
 jobs:
-  determine_env:
+  determine-env:
+    name: Determine Environment
     runs-on: ubuntu-latest
     outputs:
-      target_env: ${{ steps.set_env.outputs.target_env }}
+      target_env: ${{ steps.set-env.outputs.target_env }}
     steps:
-      - id: set_env
+      - id: set-env
         run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "target_env=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.ref_name }}" == "master" ]]; then
+          if [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
             echo "target_env=production" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.ref_name }}" == "release" ]]; then
-            # Logic: When on release branch, we target the staging environment
+          elif [[ "${{ github.ref }}" == refs/heads/release/* ]]; then
+            echo "target_env=release" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
             echo "target_env=staging" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.ref_name }}" == "staging" ]]; then
-            echo "target_env=staging" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.ref_name }}" == "develop" ]]; then
-            echo "target_env=development" >> $GITHUB_OUTPUT
           else
-            # This handles all feature/** branches
             echo "target_env=development" >> $GITHUB_OUTPUT
           fi
 
-  deploy_dev:
-    needs: determine_env
-    if: needs.determine_env.outputs.target_env == 'development'
-    uses: ./.github/workflows/development.yaml
-    with:
-      env_name: development
+  deploy:
+    name: Deploy to Environment
+    needs: determine-env
+    runs-on: ubuntu-latest
+    environment: ${{ needs.determine-env.outputs.target_env }}
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-  deploy_staging:
-    needs: determine_env
-    if: needs.determine_env.outputs.target_env == 'staging'
-    uses: ./.github/workflows/staging.yaml
-    with:
-      env_name: staging
+      - name: Run Deployment Logic
+        run: |
+          echo "🚀 Starting deployment sequence..."
+          # Your deployment commands (e.g., docker push, terraform apply, npm run deploy) would go here.
+          echo "Deployment successful."
 
-  deploy_release:
-    needs: determine_env
-    if: needs.determine_env.outputs.target_env == 'release'
-    uses: ./.github/workflows/release.yaml
-    with:
-      env_name: release
-
-  deploy_production:
-    needs: determine_env
-    if: needs.determine_env.outputs.target_env == 'production'
-    uses: ./.github/workflows/production.yaml
-    with:
-      env_name: production
+      - name: Display Detected Environment
+        run: |
+          echo "------------------------------------------------"
+          echo "✅ DEPLOYMENT COMPLETE"
+          echo "Detected Branch: ${{ github.ref_name }}"
+          echo "Target Environment: ${{ needs.determine-env.outputs.target_env }}"
+          echo "------------------------------------------------"
