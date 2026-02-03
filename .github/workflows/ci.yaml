@@ -27,9 +27,28 @@ jobs:
             echo "target_env=development" >> $GITHUB_OUTPUT
           fi
 
-  deploy:
-    name: Call Environment Workflow
+  # --- Explicit Environment Calls ---
+
+  deploy-production:
     needs: determine-env
-    # This dynamically calls .github/workflows/{env}.yaml
-    uses: ./.github/workflows/${{ needs.determine-env.outputs.target_env }}.yaml
-    secrets: inherit # Pass secrets to the sub-workflow if needed
+    if: needs.determine-env.outputs.target_env == 'production'
+    uses: ./.github/workflows/production.yaml
+    secrets: inherit
+
+  deploy-release:
+    needs: determine-env
+    if: needs.determine-env.outputs.target_env == 'release'
+    uses: ./.github/workflows/release.yaml
+    secrets: inherit
+
+  deploy-staging:
+    needs: determine-env
+    if: needs.determine-env.outputs.target_env == 'staging'
+    uses: ./.github/workflows/staging.yaml
+    secrets: inherit
+
+  deploy-development:
+    needs: determine-env
+    if: needs.determine-env.outputs.target_env == 'development'
+    uses: ./.github/workflows/development.yaml
+    secrets: inherit
