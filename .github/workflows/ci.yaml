@@ -38,7 +38,7 @@ jobs:
 
       - name: Run Deployment Logic
         run: |
-          if: needs.determine-env.outputs.target_env == 'development'
+          elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
           uses: ./.github/workflows/development.yaml
           secrets: inherit
 
