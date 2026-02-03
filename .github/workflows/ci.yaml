@@ -71,19 +71,8 @@ jobs:
 
           echo "Detected environment → $ENV_NAME"
 
-  build-and-test:
-    needs: determine-environment
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: setup your runtime
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-
   deploy:
-    needs: [determine-environment, build-and-test]
+    needs: [determine-environment]
     if: ${{ needs.determine-environment.outputs.is_deploy == 'true' }}
     runs-on: ubuntu-latest
     environment: ${{ needs.determine-environment.outputs.short_env }}
@@ -109,7 +98,7 @@ jobs:
       # Examples:
 
       #- name: Deploy to Vercel (Production)
-      #  if: needs.determine-environment.outputs.short_env == 'prod'
+      #  if: needs.determine-environment.outputs.short_env == 'production'
       #  run: npx vercel --prod --token ${{ secrets.VERCEL_TOKEN }}
 
       #- name: Deploy to Staging (Netlify / Render / Railway / ...)
@@ -117,7 +106,7 @@ jobs:
       #  run: |
 
       #- name: Deploy Release Candidate
-      #  if: startsWith(needs.determine-environment.outputs.short_env, 'rc')
+      #  if: startsWith(needs.determine-environment.outputs.short_env, 'release')
       #  run: echo "Would deploy to release preview environment..."
 
       - name: Deployment simulation complete
