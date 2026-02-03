@@ -1,0 +1,52 @@
+name: CI/CD Deployment Pipeline
+
+on:
+  push:
+    branches:
+      - master
+      - 'release/*'
+      - develop
+      - 'feature/*'
+
+jobs:
+  determine-env:
+    name: Determine Environment
+    runs-on: ubuntu-latest
+    outputs:
+      target_env: ${{ steps.set-env.outputs.target_env }}
+    steps:
+      - id: set-env
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
+            echo "target_env=production" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == refs/heads/release/* ]]; then
+            echo "target_env=release" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
+            echo "target_env=staging" >> $GITHUB_OUTPUT
+          else
+            echo "target_env=development" >> $GITHUB_OUTPUT
+          fi
+
+  deploy:
+    name: Deploy to Environment
+    needs: determine-env
+    runs-on: ubuntu-latest
+    environment: ${{ needs.determine-env.outputs.target_env }}
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Run Deployment Logic
+        run: |
+          echo "🚀 Starting deployment sequence..."
+          # Your deployment commands (e.g., docker push, terraform apply, npm run deploy) would go here.
+          echo "Deployment successful."
+
+      - name: Display Detected Environment
+        run: |
+          echo "------------------------------------------------"
+          echo "✅ DEPLOYMENT COMPLETE"
+          echo "Detected Branch: ${{ github.ref_name }}"
+          echo "Target Environment: ${{ needs.determine-env.outputs.target_env }}"
+          echo "------------------------------------------------"

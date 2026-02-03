@@ -1,0 +1,16 @@
+name: Deployment # (Update the name per file)
+
+on:
+  workflow_call:
+    inputs:
+      env_name:
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.env_name }}
+    steps:
+      - name: Deploy
+        run: echo "🚀 Successfully deployed to the ${{ inputs.env_name }} environment!"
