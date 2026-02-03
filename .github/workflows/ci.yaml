@@ -24,7 +24,7 @@ jobs:
           elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
             echo "target_env=staging" >> $GITHUB_OUTPUT
           else
-            echo "target_env=feature" >> $GITHUB_OUTPUT
+            echo "target_env=development" >> $GITHUB_OUTPUT
           fi
 
   deploy:
