@@ -1,115 +1,52 @@
-name: CI + Environment-aware Deployment
+name: CI/CD Deployment Pipeline
 
 on:
   push:
     branches:
-      - master  
-      - develop
-      - 'release/**'
-      - 'hotfix/**'
-      - 'feature/**'
-      - 'bugfix/**'
-  pull_request:
-    branches:
       - master
+      - 'release/*'
       - develop
+      - 'feature/*'
 
 jobs:
-  determine-environment:
+  determine-env:
+    name: Determine Environment
     runs-on: ubuntu-latest
-    # This job runs always — used to compute environment name
     outputs:
-      environment: ${{ steps.detect.outputs.env_name }}
-      short_env:   ${{ steps.detect.outputs.short_env }}
-      is_deploy:   ${{ steps.detect.outputs.is_deploy }}
+      target_env: ${{ steps.set-env.outputs.target_env }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Detect GitFlow environment
-        id: detect
+      - id: set-env
         run: |
-          BRANCH="${{ github.ref_name }}"
-          EVENT="${{ github.event_name }}"
-
-          echo "Branch: $BRANCH"
-          echo "Event: $EVENT"
-
-          if [[ "$EVENT" == "pull_request" ]]; then
-            ENV_NAME="preview / PR"
-            SHORT_ENV="pr"
-            IS_DEPLOY="false"
-          elif [[ "$BRANCH" == "master" ]]; then
-            ENV_NAME="production"
-            SHORT_ENV="prod"
-            IS_DEPLOY="true"
-          elif [[ "$BRANCH" == "develop" ]]; then
-            ENV_NAME="staging"
-            SHORT_ENV="staging"
-            IS_DEPLOY="true"
-          elif [[ "$BRANCH" =~ ^release/ ]]; then
-            ENV_NAME="release candidate"
-            SHORT_ENV="rc"
-            IS_DEPLOY="true"
-          elif [[ "$BRANCH" =~ ^hotfix/ ]]; then
-            ENV_NAME="hotfix / production patch"
-            SHORT_ENV="hotfix"
-            IS_DEPLOY="true"
-          elif [[ "$BRANCH" =~ ^(feature|bugfix)/ ]]; then
-            ENV_NAME="feature / development preview"
-            SHORT_ENV="feature"
-            IS_DEPLOY="false"   # usually no real deploy, or deploy to preview env
+          if [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
+            echo "target_env=production" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == refs/heads/release/* ]]; then
+            echo "target_env=release" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
+            echo "target_env=staging" >> $GITHUB_OUTPUT
           else
-            ENV_NAME="unknown-environment"
-            SHORT_ENV="unknown"
-            IS_DEPLOY="false"
+            echo "target_env=feature" >> $GITHUB_OUTPUT
           fi
 
-          echo "env_name=$ENV_NAME"   >> $GITHUB_OUTPUT
-          echo "short_env=$SHORT_ENV" >> $GITHUB_OUTPUT
-          echo "is_deploy=$IS_DEPLOY" >> $GITHUB_OUTPUT
-
-          echo "Detected environment → $ENV_NAME"
-
   deploy:
-    needs: [determine-environment]
-    if: ${{ needs.determine-environment.outputs.is_deploy == 'true' }}
+    name: Deploy to Environment
+    needs: determine-env
     runs-on: ubuntu-latest
-    environment: ${{ needs.determine-environment.outputs.short_env }}
-    # ↑ This line connects to GitHub Environments (for secrets & protection rules)
-
+    environment: ${{ needs.determine-env.outputs.target_env }}
+    
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Show detected environment
+      - name: Run Deployment Logic
         run: |
-          echo ""
-          echo "╔══════════════════════════════════════════════╗"
-          echo "║            DEPLOYMENT TARGET                 ║"
-          echo "╠══════════════════════════════════════════════╣"
-          echo "║ Environment : ${{ needs.determine-environment.outputs.environment }}"
-          echo "║ Short name  : ${{ needs.determine-environment.outputs.short_env }}"
-          echo "║ Branch      : ${{ github.ref_name }}"
-          echo "║ Commit      : ${{ github.sha }}"
-          echo "╚══════════════════════════════════════════════╝"
-          echo ""
+          echo "🚀 Starting deployment sequence..."
+          # Your deployment commands (e.g., docker push, terraform apply, npm run deploy) would go here.
+          echo "Deployment successful."
 
-      # ── Add your real deployment steps here ────────────────────────────────
-      # Examples:
-
-      #- name: Deploy to Vercel (Production)
-      #  if: needs.determine-environment.outputs.short_env == 'production'
-      #  run: npx vercel --prod --token ${{ secrets.VERCEL_TOKEN }}
-
-      #- name: Deploy to Staging (Netlify / Render / Railway / ...)
-      #  if: needs.determine-environment.outputs.short_env == 'staging'
-      #  run: |
-
-      #- name: Deploy Release Candidate
-      #  if: startsWith(needs.determine-environment.outputs.short_env, 'release')
-      #  run: echo "Would deploy to release preview environment..."
-
-      - name: Deployment simulation complete
+      - name: Display Detected Environment
         run: |
-          echo "Deployment steps for ${{ needs.determine-environment.outputs.environment }} completed (or simulated)."
-          echo "Environment confirmed: ${{ needs.determine-environment.outputs.environment }}"
+          echo "------------------------------------------------"
+          echo "✅ DEPLOYMENT COMPLETE"
+          echo "Detected Branch: ${{ github.ref_name }}"
+          echo "Target Environment: ${{ needs.determine-env.outputs.target_env }}"
+          echo "------------------------------------------------"
