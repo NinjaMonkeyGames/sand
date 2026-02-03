@@ -4,9 +4,9 @@ on:
   push:
     branches:
       - master
-      - 'release/*'
+      - 'release'
       - develop
-      - 'feature/*'
+      - 'feature/**'
 
 jobs:
   determine-env:
