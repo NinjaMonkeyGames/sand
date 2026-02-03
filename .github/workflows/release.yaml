@@ -1,3 +1,4 @@
+# .github/workflows/production.yaml
 on:
   workflow_call:
 
@@ -5,5 +6,5 @@ jobs:
   confirm:
     runs-on: ubuntu-latest
     steps:
-      - name: Staging Confirmation
-        run: echo "🧪 [RELeASE] Release Verified. Notifying QA team."
+      - name: Confirm
+        run: echo "Release deployment confirmed."

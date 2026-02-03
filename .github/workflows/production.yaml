@@ -1,11 +1,10 @@
+# .github/workflows/production.yaml
 on:
-  workflow_call: # Required for the main pipeline to call this file
+  workflow_call:
 
 jobs:
   confirm:
     runs-on: ubuntu-latest
     steps:
-      - name: Production Confirmation
-        run: |
-          echo "🚀 [PRODUCTION] Deployment Verified."
-          echo "Running production-only smoke tests..."
+      - name: Confirm
+        run: echo "Production deployment confirmed."
