@@ -74,7 +74,14 @@ jobs:
   build-and-test:
     needs: determine-environment
     runs-on: ubuntu-latest
-    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: setup your runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
   deploy:
     needs: [determine-environment, build-and-test]
     if: ${{ needs.determine-environment.outputs.is_deploy == 'true' }}
