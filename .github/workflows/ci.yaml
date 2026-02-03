@@ -4,9 +4,9 @@ on:
   push:
     branches:
       - master
-      - 'release/*'
+      - release
       - develop
-      - 'feature/*'
+      - 'feature/**'
 
 jobs:
   determine-env:
@@ -19,7 +19,7 @@ jobs:
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
             echo "target_env=production" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.ref }}" == refs/heads/release/* ]]; then
+          elif [[ "${{ github.ref }}" == refs/heads/release ]]; then
             echo "target_env=release" >> $GITHUB_OUTPUT
           elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
             echo "target_env=staging" >> $GITHUB_OUTPUT
