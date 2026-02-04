@@ -8,3 +8,4 @@ jobs:
     steps:
       - name: Confirm
         run: echo "Production deployment confirmed."
+    environment: production
