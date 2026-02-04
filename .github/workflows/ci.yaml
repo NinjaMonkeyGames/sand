@@ -48,28 +48,32 @@ jobs:
       - name: Deploy using the correct YAML file
         id: deploy
         run: |
+          set -e  # Fail the script on any command that exits with a non-zero status
+          set -x  # Print commands as they are executed
+          
           ENV=${{ needs.determine-env.outputs.target_env }}
           echo "🚀 Deploying to $ENV environment..."
+          
           case "$ENV" in
             production)
               echo "Using production.yaml"
               # Example: kubectl apply -f production.yaml
-              kubectl apply -f production.yaml
+              kubectl apply -f production.yaml || { echo "Error deploying to production"; exit 1; }
               ;;
             release)
               echo "Using release.yaml"
               # Example: kubectl apply -f release.yaml
-              kubectl apply -f release.yaml
+              kubectl apply -f release.yaml || { echo "Error deploying to release"; exit 1; }
               ;;
             staging)
               echo "Using staging.yaml"
               # Example: kubectl apply -f staging.yaml
-              kubectl apply -f staging.yaml
+              kubectl apply -f staging.yaml || { echo "Error deploying to staging"; exit 1; }
               ;;
             development)
               echo "Using development.yaml"
               # Example: kubectl apply -f development.yaml
-              kubectl apply -f development.yaml
+              kubectl apply -f development.yaml || { echo "Error deploying to development"; exit 1; }
               ;;
             *)
               echo "Unknown environment: $ENV"
