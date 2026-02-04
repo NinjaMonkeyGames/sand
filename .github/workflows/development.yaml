@@ -7,6 +7,12 @@ on:
         required: false
       GPG_PASSPHRASE:
         required: false
+      APP_ID:
+        required: true
+      APP_PRIVATE_KEY:
+        required: true
+      SSH_SIGNING_KEY:
+        required: true
 
 jobs:
   # Job 1: Manual/Initial Confirmation
