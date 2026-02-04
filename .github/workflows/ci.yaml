@@ -37,12 +37,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Run Deployment Logic
-        run: |
-          echo "🚀 Starting deployment sequence..."
-          # Your deployment commands (e.g., docker push, terraform apply, npm run deploy) would go here.
-          echo "Deployment successful."
-
       - name: Display Detected Environment
         run: |
           echo "------------------------------------------------"
@@ -50,3 +44,35 @@ jobs:
           echo "Detected Branch: ${{ github.ref_name }}"
           echo "Target Environment: ${{ needs.determine-env.outputs.target_env }}"
           echo "------------------------------------------------"
+          
+      - name: Deploy using the correct YAML file
+        run: |
+          ENV=${{ needs.determine-env.outputs.target_env }}
+          echo "🚀 Deploying to $ENV environment..."
+          case "$ENV" in
+            production)
+              echo "Using production.yaml"
+              # Add the command to deploy using production.yaml
+              # Example: kubectl apply -f production.yaml
+              ;;
+            release)
+              echo "Using release.yaml"
+              # Add the command to deploy using release.yaml
+              # Example: kubectl apply -f release.yaml
+              ;;
+            staging)
+              echo "Using staging.yaml"
+              # Add the command to deploy using staging.yaml
+              # Example: kubectl apply -f staging.yaml
+              ;;
+            development)
+              echo "Using development.yaml"
+              # Add the command to deploy using development.yaml
+              # Example: kubectl apply -f development.yaml
+              ;;
+            *)
+              echo "Unknown environment: $ENV"
+              exit 1
+              ;;
+          esac
+          echo "Deployment to $ENV completed."
