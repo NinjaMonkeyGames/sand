@@ -1,4 +1,3 @@
-# .github/workflows/production.yaml
 on:
   workflow_call:
 
@@ -6,6 +5,10 @@ jobs:
   confirm:
     runs-on: ubuntu-latest
     steps:
+      - name: job
+        run: echo "Production deployment confirmed."
+
       - name: Confirm
         run: echo "Production deployment confirmed."
+
     environment: production
