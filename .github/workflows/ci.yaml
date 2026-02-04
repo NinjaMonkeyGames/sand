@@ -19,7 +19,7 @@ jobs:
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
             echo "target_env=production" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.ref }}" == refs/heads/release ]]; then
+          elif [[ "${{ github.ref }}" == "refs/heads/release" ]]; then
             echo "target_env=release" >> $GITHUB_OUTPUT
           elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
             echo "target_env=staging" >> $GITHUB_OUTPUT
@@ -27,68 +27,28 @@ jobs:
             echo "target_env=development" >> $GITHUB_OUTPUT
           fi
 
-  deploy:
-    name: Deploy to Environment
+  # --- Deployment Jobs ---
+
+  deploy-production:
     needs: determine-env
-    runs-on: ubuntu-latest
-    environment: ${{ needs.determine-env.outputs.target_env }}
-    
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+    if: needs.determine-env.outputs.target_env == 'production'
+    uses: ./.github/workflows/production.yaml
+    secrets: inherit
 
-      - name: Display Detected Environment
-        run: |
-          echo "------------------------------------------------"
-          echo "✅ DEPLOYMENT COMPLETE"
-          echo "Detected Branch: ${{ github.ref_name }}"
-          echo "Target Environment: ${{ needs.determine-env.outputs.target_env }}"
-          echo "------------------------------------------------"
-          
-      - name: Verify Environment YAML Files
-        run: |
-          echo "Verifying the presence of environment-specific YAML files..."
-          ls -l production.yaml release.yaml staging.yaml development.yaml || { echo "Error: One or more environment YAML files are missing."; exit 1; }
+  deploy-release:
+    needs: determine-env
+    if: needs.determine-env.outputs.target_env == 'release'
+    uses: ./.github/workflows/release.yaml
+    secrets: inherit
 
-      - name: Deploy using the correct YAML file
-        id: deploy
-        run: |
-          set -e  # Fail the script on any command that exits with a non-zero status
-          set -x  # Print commands as they are executed
-          
-          ENV=${{ needs.determine-env.outputs.target_env }}
-          echo "🚀 Deploying to $ENV environment..."
-          
-          case "$ENV" in
-            production)
-              echo "Using production.yaml"
-              kubectl apply -f production.yaml || { echo "Error deploying to production"; exit 1; }
-              ;;
-            release)
-              echo "Using release.yaml"
-              kubectl apply -f release.yaml || { echo "Error deploying to release"; exit 1; }
-              ;;
-            staging)
-              echo "Using staging.yaml"
-              kubectl apply -f staging.yaml || { echo "Error deploying to staging"; exit 1; }
-              ;;
-            development)
-              echo "Using development.yaml"
-              kubectl apply -f development.yaml || { echo "Error deploying to development"; exit 1; }
-              ;;
-            *)
-              echo "Unknown environment: $ENV"
-              exit 1
-              ;;
-          esac
+  deploy-staging:
+    needs: determine-env
+    if: needs.determine-env.outputs.target_env == 'staging'
+    uses: ./.github/workflows/staging.yaml
+    secrets: inherit
 
-      - name: Mark deployment as successful
-        if: ${{ success() }}
-        run: |
-          echo "🚀 Deployment to ${{ needs.determine-env.outputs.target_env }} completed successfully!"
-
-      - name: Handle deployment failure
-        if: ${{ failure() }}
-        run: |
-          echo "❌ Deployment to ${{ needs.determine-env.outputs.target_env }} failed."
-          exit 1
+  deploy-development:
+    needs: determine-env
+    if: needs.determine-env.outputs.target_env == 'development'
+    uses: ./.github/workflows/development.yaml
+    secrets: inherit
