@@ -40,7 +40,7 @@ jobs:
       - name: Modify Configuration
         run: |
           ENV=${{ needs.determine-env.outputs.target_env }}
-          CONFIG_FILE="${ENV}.yaml"
+          CONFIG_FILE=".github/workflows/${ENV}.yaml"
           
           if [ -f "$CONFIG_FILE" ]; then
             echo "🛠️ Modifying $CONFIG_FILE for $ENV environment..."
@@ -59,7 +59,7 @@ jobs:
       - name: Deploy using the correct YAML file
         run: |
           ENV=${{ needs.determine-env.outputs.target_env }}
-          CONFIG_FILE="${ENV}.yaml"
+          CONFIG_FILE=".github/workflows/${ENV}.yaml"
           
           echo "🚀 Deploying to $ENV environment using $CONFIG_FILE..."
           
