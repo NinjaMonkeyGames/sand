@@ -19,7 +19,7 @@ jobs:
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
             echo "target_env=production" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.ref }}" == refs/heads/release ]]; then
+          elif [[ "${{ github.ref }}" == "refs/heads/release" ]]; then
             echo "target_env=release" >> $GITHUB_OUTPUT
           elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
             echo "target_env=staging" >> $GITHUB_OUTPUT
@@ -37,42 +37,27 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Display Detected Environment
-        run: |
-          echo "------------------------------------------------"
-          echo "✅ DEPLOYMENT COMPLETE"
-          echo "Detected Branch: ${{ github.ref_name }}"
-          echo "Target Environment: ${{ needs.determine-env.outputs.target_env }}"
-          echo "------------------------------------------------"
-          
       - name: Deploy using the correct YAML file
         run: |
+          # Capture the output from the previous job
           ENV=${{ needs.determine-env.outputs.target_env }}
-          echo "🚀 Deploying to $ENV environment..."
-          case "$ENV" in
-            production)
-              echo "Using production.yaml"
-              # Add the command to deploy using production.yaml
-              # Example: kubectl apply -f production.yaml
-              ;;
-            release)
-              echo "Using release.yaml"
-              # Add the command to deploy using release.yaml
-              # Example: kubectl apply -f release.yaml
-              ;;
-            staging)
-              echo "Using staging.yaml"
-              # Add the command to deploy using staging.yaml
-              # Example: kubectl apply -f staging.yaml
-              ;;
-            development)
-              echo "Using development.yaml"
-              # Add the command to deploy using development.yaml
-              # Example: kubectl apply -f development.yaml
-              ;;
-            *)
-              echo "Unknown environment: $ENV"
-              exit 1
-              ;;
-          esac
-          echo "Deployment to $ENV completed."
+          CONFIG_FILE="${ENV}.yaml"
+          
+          echo "🚀 Deploying to $ENV environment using $CONFIG_FILE..."
+          
+          # Check if the file actually exists before running the command
+          if [ -f "$CONFIG_FILE" ]; then
+            echo "✅ Found $CONFIG_FILE. Executing deployment..."
+            
+            # Replace the line below with your actual deployment command
+            # Example: kubectl apply -f "$CONFIG_FILE"
+            cat "$CONFIG_FILE" # Example: printing file content
+            
+          else
+            echo "❌ Error: Configuration file $CONFIG_FILE not found!"
+            exit 1
+          fi
+          
+          echo "------------------------------------------------"
+          echo "✅ DEPLOYMENT TO $ENV COMPLETE"
+          echo "------------------------------------------------"

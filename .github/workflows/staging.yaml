@@ -1,4 +1,3 @@
-# .github/workflows/production.yaml
 on:
   workflow_call:
 
