@@ -1,3 +1,10 @@
+# [1.0.0-beta.2](https://github.com/NinjaMonkeyGames/sand/compare/v1.0.0-beta.1...v1.0.0-beta.2) (2026-02-05)
+
+
+### Features
+
+* **core:** test fin 1 ([1b7a9b1](https://github.com/NinjaMonkeyGames/sand/commit/1b7a9b156f1781361fc6c674fbbe72fb18923934)), closes [#0](https://github.com/NinjaMonkeyGames/sand/issues/0)
+
 # 1.0.0-beta.1 (2026-02-05)
 
 
