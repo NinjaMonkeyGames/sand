@@ -3,10 +3,12 @@ name: CI/CD Deployment Pipeline
 on:
   push:
     branches:
+      - 'feature/**'
+  pull_request:
+    branches:
       - master
       - release
       - develop
-      - 'feature/**'
 
 jobs:
   determine-env:
