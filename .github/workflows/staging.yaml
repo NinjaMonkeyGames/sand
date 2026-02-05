@@ -35,23 +35,24 @@ jobs:
     uses: ./.github/workflows/smoke-tests.yaml
     secrets: inherit
 
-  # Job 5: Core Environment Steps
+## Job 5: Core Environment Steps
   staging_ci:
     name: Staging Build Steps
     runs-on: ubuntu-latest
-    # This job waits for all linting, smoke tests, AND the confirmation job
     needs: [confirm, call_commitlint, call_markdownlint, call_smoke_tests]
     environment: staging
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
       
-      - name: 🚀 Semantic Release
-        uses: ./.github/workflows/semantic-release.yaml
-
       - name: 🛠️ Report Successful Staging Call
         run: |
-          echo "#####################################################"
-          echo "## STAGING WORKFLOW (Staging Branch) CALLED!   ##"
-          echo "#####################################################"
-          echo "All linting and smoke tests passed. Proceeding with core staging build."
+          echo "Processing staging build..."
+
+  # Job 6: Semantic Release
+  call_semantic_release:
+    needs: staging_ci
+    uses: ./.github/workflows/semantic-release.yaml
+    with:
+      environment: staging  # <--- Pass the required input here
+    secrets: inherit
