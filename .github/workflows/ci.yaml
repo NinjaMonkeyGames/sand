@@ -37,22 +37,36 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Modify Configuration
+        run: |
+          ENV=${{ needs.determine-env.outputs.target_env }}
+          CONFIG_FILE="${ENV}.yaml"
+          
+          if [ -f "$CONFIG_FILE" ]; then
+            echo "🛠️ Modifying $CONFIG_FILE for $ENV environment..."
+            
+            # Example: Using 'sed' to update a version or placeholder
+            # sed -i "s/BUILD_TAG/v${{ github.run_number }}/g" "$CONFIG_FILE"
+            
+            # If "modify" is a specific tool you use, call it here:
+            # ./modify-tool --file "$CONFIG_FILE" --env "$ENV"
+            
+            echo "✅ Modification complete."
+          else
+            echo "⚠️ Skip Modification: $CONFIG_FILE not found."
+          fi
+
       - name: Deploy using the correct YAML file
         run: |
-          # Capture the output from the previous job
           ENV=${{ needs.determine-env.outputs.target_env }}
           CONFIG_FILE="${ENV}.yaml"
           
           echo "🚀 Deploying to $ENV environment using $CONFIG_FILE..."
           
-          # Check if the file actually exists before running the command
           if [ -f "$CONFIG_FILE" ]; then
-            echo "✅ Found $CONFIG_FILE. Executing deployment..."
-            
-            # Replace the line below with your actual deployment command
-            # Example: kubectl apply -f "$CONFIG_FILE"
-            cat "$CONFIG_FILE" # Example: printing file content
-            
+            echo "✅ Executing deployment..."
+            # Replace with your actual deployment command (e.g., kubectl apply)
+            cat "$CONFIG_FILE" 
           else
             echo "❌ Error: Configuration file $CONFIG_FILE not found!"
             exit 1
