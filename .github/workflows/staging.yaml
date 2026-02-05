@@ -45,6 +45,9 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+      
+      - name: 🚀 Semantic Release
+        uses: ./.github/workflows/semantic-release.yaml
 
       - name: 🛠️ Report Successful Staging Call
         run: |
@@ -52,6 +55,3 @@ jobs:
           echo "## STAGING WORKFLOW (Staging Branch) CALLED!   ##"
           echo "#####################################################"
           echo "All linting and smoke tests passed. Proceeding with core staging build."
-      
-      - name: 🚀 Semantic Release
-        uses: ./.github/workflows/semantic-release.yaml
