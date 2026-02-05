@@ -8,4 +8,3 @@ jobs:
     steps:
       - name: Confirm
         run: echo "Staging deployment confirmed."
-    environment: staging

@@ -7,5 +7,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Confirm
-        run: echo "Release deployment confirmed."
-    environment: release
+        run: echo "Staging deployment confirmed."
