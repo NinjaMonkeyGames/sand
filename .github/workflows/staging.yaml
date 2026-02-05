@@ -7,12 +7,7 @@ on:
         required: false
       GPG_PASSPHRASE:
         required: false
-      APP_ID:
-        required: true
-      APP_PRIVATE_KEY:
-        required: true
-      SSH_SIGNING_KEY:
-        required: true
+
 jobs:
   # Job 1: Manual/Initial Confirmation
   confirm:
@@ -39,20 +34,13 @@ jobs:
     name: 💨 Run Smoke Tests
     uses: ./.github/workflows/smoke-tests.yaml
     secrets: inherit
-  # Job 4: NEW JOB - Smoke Tests Call
-    
-  call_semantic_release:
-    name: 💨 Run Semantic Release
-    needs: [call_commitlint, call_markdownlint, call_smoke_tests]
-    uses: ./.github/workflows/semantic-release.yaml
-    secrets: inherit
 
   # Job 5: Core Environment Steps
   staging_ci:
     name: Staging Build Steps
     runs-on: ubuntu-latest
     # This job waits for all linting, smoke tests, AND the confirmation job
-    needs: [confirm, call_commitlint, call_markdownlint, call_smoke_tests, call_semantic_release]
+    needs: [confirm, call_commitlint, call_markdownlint, call_smoke_tests]
     environment: staging
     steps:
       - name: Checkout Code
