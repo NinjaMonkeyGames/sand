@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Confirm
-        run: echo "Release production confirmed."
+        run: echo "production deployment confirmed."
 
   # Job 2: Commit Lint Check
   call_commitlint:
@@ -35,24 +35,20 @@ jobs:
     uses: ./.github/workflows/smoke-tests.yaml
     secrets: inherit
 
-## Job 5: Core Environment Steps
+  # Job 5: Core Environment Steps
   production_ci:
     name: Production Build Steps
     runs-on: ubuntu-latest
+    # This job waits for all linting, smoke tests, AND the confirmation job
     needs: [confirm, call_commitlint, call_markdownlint, call_smoke_tests]
     environment: production
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-      
-      - name: 🛠️ Report Successful production Call
-        run: |
-          echo "Processing production build..."
 
-  # Job 6: Semantic Release
-  call_semantic_release:
-    needs: production_ci
-    uses: ./.github/workflows/semantic-release.yaml
-    with:
-      environment: production # <--- Pass the required input here
-    secrets: inherit
+      - name: 🛠️ Report Successful Production Call
+        run: |
+          echo "#####################################################"
+          echo "## PRODUCTION WORKFLOW (Master Branch) CALLED!   ##"
+          echo "#####################################################"
+          echo "All linting and smoke tests passed. Proceeding with core production build."

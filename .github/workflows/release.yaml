@@ -35,24 +35,20 @@ jobs:
     uses: ./.github/workflows/smoke-tests.yaml
     secrets: inherit
 
-## Job 5: Core Environment Steps
+  # Job 5: Core Environment Steps
   release_ci:
     name: Release Build Steps
     runs-on: ubuntu-latest
+    # This job waits for all linting, smoke tests, AND the confirmation job
     needs: [confirm, call_commitlint, call_markdownlint, call_smoke_tests]
     environment: release
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-      
-      - name: 🛠️ Report Successful release Call
-        run: |
-          echo "Processing release build..."
 
-  # Job 6: Semantic Release
-  call_semantic_release:
-    needs: release_ci
-    uses: ./.github/workflows/semantic-release.yaml
-    with:
-      environment: release  # <--- Pass the required input here
-    secrets: inherit
+      - name: 🛠️ Report Successful Release Call
+        run: |
+          echo "#####################################################"
+          echo "## RELEASE WORKFLOW (Release Branch) CALLED!   ##"
+          echo "#####################################################"
+          echo "All linting and smoke tests passed. Proceeding with core release build."
