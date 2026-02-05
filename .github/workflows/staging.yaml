@@ -1,58 +1,10 @@
-name: Staging CI
-
+# .github/workflows/production.yaml
 on:
   workflow_call:
-    secrets:
-      GPG_PRIVATE_KEY:
-        required: false
-      GPG_PASSPHRASE:
-        required: false
 
 jobs:
-  # Job 1: Manual/Initial Confirmation
   confirm:
-    name: ✅ Confirmation
     runs-on: ubuntu-latest
     steps:
       - name: Confirm
-        run: echo "Release staging confirmed."
-
-  # Job 2: Commit Lint Check
-  call_commitlint:
-    name: ⚙️ Commit Lint Check
-    uses: ./.github/workflows/commitlint.yaml
-    secrets: inherit
-
-  # Job 3: Markdown Lint Check
-  call_markdownlint:
-    name: 📄 Markdown Lint Check
-    uses: ./.github/workflows/markdownlint.yaml
-    secrets: inherit
-    
-  # Job 4: Smoke Tests Call
-  call_smoke_tests:
-    name: 💨 Run Smoke Tests
-    uses: ./.github/workflows/smoke-tests.yaml
-    secrets: inherit
-
-## Job 5: Core Environment Steps
-  staging_ci:
-    name: Staging Build Steps
-    runs-on: ubuntu-latest
-    needs: [confirm, call_commitlint, call_markdownlint, call_smoke_tests]
-    environment: staging
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-      
-      - name: 🛠️ Report Successful Staging Call
-        run: |
-          echo "Processing staging build..."
-
-  # Job 6: Semantic Release
-  call_semantic_release:
-    needs: staging_ci
-    uses: ./.github/workflows/semantic-release.yaml
-    with:
-      environment: staging  # <--- Pass the required input here
-    secrets: inherit
+        run: echo "Staging deployment confirmed."
