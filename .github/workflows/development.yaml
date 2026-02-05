@@ -31,6 +31,11 @@ jobs:
     uses: ./.github/workflows/smoke-tests.yaml
     secrets: inherit
 
+  call_semantic_release:
+    name: 💨 Run Semantic Release
+    uses: ./.github/workflows/semantic-release.yaml
+    secrets: inherit
+
   development_ci:
     name: Development Build Steps
     runs-on: ubuntu-latest
@@ -45,14 +50,3 @@ jobs:
           echo "#####################################################"
           echo "## DEVELOPMENT WORKFLOW (Feature Branch) CALLED!   ##"
           echo "#####################################################"
-
-  # Job 6: Semantic Release Call
-  call_semantic_release:
-    name: 🚀 Semantic Release
-    needs: [development_ci]
-    uses: ./.github/workflows/semantic-release.yaml
-    secrets:
-      GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-      GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-      # Note: semantic-release also usually requires a GITHUB_TOKEN or NPM_TOKEN 
-      # depending on your setup in the reusable workflow.
