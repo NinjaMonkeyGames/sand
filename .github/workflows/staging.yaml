@@ -52,3 +52,6 @@ jobs:
           echo "## STAGING WORKFLOW (Staging Branch) CALLED!   ##"
           echo "#####################################################"
           echo "All linting and smoke tests passed. Proceeding with core staging build."
+      
+      - name: 🚀 Semantic Release
+        uses: ./.github/workflows/semantic-release.yaml
