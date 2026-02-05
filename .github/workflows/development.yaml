@@ -31,11 +31,6 @@ jobs:
     uses: ./.github/workflows/smoke-tests.yaml
     secrets: inherit
 
-  call_semantic_release:
-    name: 💨 Run Semantic Release
-    uses: ./.github/workflows/semantic-release.yaml
-    secrets: inherit
-
   development_ci:
     name: Development Build Steps
     runs-on: ubuntu-latest
