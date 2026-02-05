@@ -9,6 +9,7 @@ on:
         required: false
 
 jobs:
+  # Job 1: Manual/Initial Confirmation
   confirm:
     name: ✅ Confirmation
     runs-on: ubuntu-latest
