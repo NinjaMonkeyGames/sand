@@ -1,11 +1,33 @@
-# .github/workflows/production.yaml
+name: Staging Deployment
+
 on:
   workflow_call:
+    # Receives the call from CI Controller
 
 jobs:
-  confirm:
+  # 1. Linting Jobs (Running in parallel)
+  commit-lint:
+    uses: ./.github/workflows/commitlint.yaml
+    secrets: inherit
+
+  markdown-lint:
+    uses: ./.github/workflows/markdownlint.yaml
+    secrets: inherit
+
+  # 2. Deployment Job (Wait for linting to pass)
+  deploy-staging:
+    name: Execute Staging Build
+    needs: [commit-lint, markdown-lint]
     runs-on: ubuntu-latest
-    steps:
-      - name: Confirm
-        run: echo "Staging deployment confirmed."
     environment: staging
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Deployment Simulation
+        run: |
+          echo "-------------------------------------------------------"
+          echo "🚀 STARTING STAGING DEPLOYMENT"
+          echo "-------------------------------------------------------"
+          echo "✅ Staging deployment marked as COMPLETE."
+          echo "-------------------------------------------------------"
