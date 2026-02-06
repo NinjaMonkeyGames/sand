@@ -2,15 +2,24 @@ name: Development Deployment
 
 on:
   workflow_call:
-    # This enables the "call" from your CI Controller
+    # Receives the call from CI Controller
 
 jobs:
-  deploy-dev:
-    name: Execute Development Build
-    runs-on: ubuntu-latest
-    # This links the job to a GitHub Environment for tracking
-    environment: development
+  # 1. Linting Jobs (Running in parallel)
+  commit-lint:
+    uses: ./.github/workflows/commitlint.yaml
+    secrets: inherit
 
+  markdown-lint:
+    uses: ./.github/workflows/markdownlint.yaml
+    secrets: inherit
+
+  # 2. Deployment Job (Wait for linting to pass)
+  deploy-development:
+    name: Execute Development Build
+    needs: [commit-lint, markdown-lint]
+    runs-on: ubuntu-latest
+    environment: development
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -20,15 +29,5 @@ jobs:
           echo "-------------------------------------------------------"
           echo "🚀 STARTING DEVELOPMENT DEPLOYMENT"
           echo "-------------------------------------------------------"
-          echo "Target Environment: Development"
-          echo "Triggered by: ${{ github.actor }}"
-          echo "Status: In Progress..."
-          
-          # Simulate work
-          sleep 2
-          
           echo "✅ Development deployment marked as COMPLETE."
           echo "-------------------------------------------------------"
-
-      - name: Final Success Message
-        run: echo "The development workflow has finished successfully."

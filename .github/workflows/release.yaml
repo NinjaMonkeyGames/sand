@@ -2,33 +2,32 @@ name: Release Deployment
 
 on:
   workflow_call:
-    # This enables the "call" from your CI Controller
+    # Receives the call from CI Controller
 
 jobs:
-  deploy-dev:
-    name: Execute Release Build
-    runs-on: ubuntu-latest
-    # This links the job to a GitHub Environment for tracking
-    environment: release
+  # 1. Linting Jobs (Running in parallel)
+  commit-lint:
+    uses: ./.github/workflows/commitlint.yaml
+    secrets: inherit
 
+  markdown-lint:
+    uses: ./.github/workflows/markdownlint.yaml
+    secrets: inherit
+
+  # 2. Deployment Job (Wait for linting to pass)
+  deploy-release:
+    name: Execute Release Build
+    needs: [commit-lint, markdown-lint]
+    runs-on: ubuntu-latest
+    environment: release
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Release Simulation
+      - name: Deployment Simulation
         run: |
           echo "-------------------------------------------------------"
           echo "🚀 STARTING RELEASE DEPLOYMENT"
           echo "-------------------------------------------------------"
-          echo "Target Environment: Release"
-          echo "Triggered by: ${{ github.actor }}"
-          echo "Status: In Progress..."
-          
-          # Simulate work
-          sleep 2
-          
           echo "✅ Release deployment marked as COMPLETE."
           echo "-------------------------------------------------------"
-
-      - name: Final Success Message
-        run: echo "The release workflow has finished successfully."

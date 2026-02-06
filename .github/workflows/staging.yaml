@@ -2,33 +2,32 @@ name: Staging Deployment
 
 on:
   workflow_call:
-    # This enables the "call" from your CI Controller
+    # Receives the call from CI Controller
 
 jobs:
-  deploy-dev:
-    name: Execute Staging Build
-    runs-on: ubuntu-latest
-    # This links the job to a GitHub Environment for tracking
-    environment: staging
+  # 1. Linting Jobs (Running in parallel)
+  commit-lint:
+    uses: ./.github/workflows/commitlint.yaml
+    secrets: inherit
 
+  markdown-lint:
+    uses: ./.github/workflows/markdownlint.yaml
+    secrets: inherit
+
+  # 2. Deployment Job (Wait for linting to pass)
+  deploy-staging:
+    name: Execute Staging Build
+    needs: [commit-lint, markdown-lint]
+    runs-on: ubuntu-latest
+    environment: staging
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Staging Simulation
+      - name: Deployment Simulation
         run: |
           echo "-------------------------------------------------------"
           echo "🚀 STARTING STAGING DEPLOYMENT"
           echo "-------------------------------------------------------"
-          echo "Target Environment: Staging"
-          echo "Triggered by: ${{ github.actor }}"
-          echo "Status: In Progress..."
-          
-          # Simulate work
-          sleep 2
-          
           echo "✅ Staging deployment marked as COMPLETE."
           echo "-------------------------------------------------------"
-
-      - name: Final Success Message
-        run: echo "The staging workflow has finished successfully."

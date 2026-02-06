@@ -32,8 +32,6 @@ jobs:
       - id: branch-check
         shell: bash
         run: |
-          # 1. Check if a manual override was provided via workflow_dispatch
-          # 2. Otherwise, map the branch name to the environment
           if [[ "${{ github.event.inputs.force_env }}" != "" ]]; then
             ENV="${{ github.event.inputs.force_env }}"
           elif [[ $GITHUB_REF_NAME == feature/* ]]; then
