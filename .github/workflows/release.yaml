@@ -14,10 +14,18 @@ jobs:
     uses: ./.github/workflows/markdownlint.yaml
     secrets: inherit
 
-  # 2. Deployment Job (Wait for linting to pass)
+  # 2. Semantic Release (Wait for linters)
+  semantic-release:
+    needs: [commit-lint, markdown-lint]
+    uses: ./.github/workflows/semantic-release.yaml
+    with:
+      environment: release  # Explicitly passing the value here
+    secrets: inherit
+
+  # 3. Deployment Job (Wait for Release to finish)
   deploy-release:
     name: Execute Release Build
-    needs: [commit-lint, markdown-lint]
+    needs: [semantic-release]
     runs-on: ubuntu-latest
     environment: release
     steps:
