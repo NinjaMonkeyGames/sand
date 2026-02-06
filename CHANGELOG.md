@@ -1,3 +1,14 @@
+# [1.0.0-beta.4](https://github.com/NinjaMonkeyGames/sand/compare/v1.0.0-beta.3...v1.0.0-beta.4) (2026-02-06)
+
+
+### Features
+
+* **core:** new test 1 ([f58b974](https://github.com/NinjaMonkeyGames/sand/commit/f58b974fb40d0d1d62b5a5d644c43238359155b8)), closes [#0](https://github.com/NinjaMonkeyGames/sand/issues/0)
+* **core:** new test 4 ([f9c9fc6](https://github.com/NinjaMonkeyGames/sand/commit/f9c9fc62b3f6dd525b558a4857c1e8360ba769c7)), closes [#0](https://github.com/NinjaMonkeyGames/sand/issues/0)
+* **core:** new test 5 ([e8c53d3](https://github.com/NinjaMonkeyGames/sand/commit/e8c53d376e374f53726814d89a3026f7861763b7)), closes [#0](https://github.com/NinjaMonkeyGames/sand/issues/0)
+* **core:** test full 4 ([dd0497e](https://github.com/NinjaMonkeyGames/sand/commit/dd0497e1fff13a9d1e89f7a6631f0796fdb5f136)), closes [#0](https://github.com/NinjaMonkeyGames/sand/issues/0)
+* **core:** test full 7 ([1aea591](https://github.com/NinjaMonkeyGames/sand/commit/1aea59112333887fc0c536f974d07d08a1bbc36f)), closes [#0](https://github.com/NinjaMonkeyGames/sand/issues/0)
+
 # [1.0.0-beta.3](https://github.com/NinjaMonkeyGames/sand/compare/v1.0.0-beta.2...v1.0.0-beta.3) (2026-02-05)
 
 
