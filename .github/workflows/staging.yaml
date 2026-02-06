@@ -1,5 +1,4 @@
-name: Staging Deployment
-
+# .github/workflows/production.yaml
 on:
   workflow_call:
     # This enables the "call" from your CI Controller
