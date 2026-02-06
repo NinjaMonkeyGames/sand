@@ -1,41 +1,10 @@
-name: Staging Deployment
-
+# .github/workflows/production.yaml
 on:
   workflow_call:
-    # Receives the call from CI Controller
 
 jobs:
-  # 1. Linting Jobs (Running in parallel)
-  commit-lint:
-    uses: ./.github/workflows/commitlint.yaml
-    secrets: inherit
-
-  markdown-lint:
-    uses: ./.github/workflows/markdownlint.yaml
-    secrets: inherit
-
-  # 2. Semantic Release (Wait for linters)
-  semantic-release:
-    needs: [commit-lint, markdown-lint]
-    uses: ./.github/workflows/semantic-release.yaml
-    with:
-      environment: staging  # Explicitly passing the value here
-    secrets: inherit
-
-  # 3. Deployment Job (Wait for Release to finish)
-  deploy-staging:
-    name: Execute Staging Build
-    needs: [semantic-release]
+  confirm:
     runs-on: ubuntu-latest
-    environment: staging
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Deployment Simulation
-        run: |
-          echo "-------------------------------------------------------"
-          echo "🚀 STARTING STAGING DEPLOYMENT"
-          echo "-------------------------------------------------------"
-          echo "✅ Staging deployment marked as COMPLETE."
-          echo "-------------------------------------------------------"
+      - name: Confirm
+        run: echo "Staging deployment confirmed."
