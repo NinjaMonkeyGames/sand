@@ -1,33 +1,33 @@
-# .github/workflows/production.yaml
+name: Production Deployment
+
 on:
   workflow_call:
-    # This enables the "call" from your CI Controller
+    # Receives the call from CI Controller
 
 jobs:
-  deploy-dev:
-    name: Execute Production Build
-    runs-on: ubuntu-latest
-    # This links the job to a GitHub Environment for tracking
-    environment: production
+  # 1. Linting Jobs (Running in parallel)
+  commit-lint:
+    uses: ./.github/workflows/commitlint.yaml
+    secrets: inherit
 
+  markdown-lint:
+    uses: ./.github/workflows/markdownlint.yaml
+    secrets: inherit
+
+  # 2. Deployment Job (Wait for linting to pass)
+  deploy-production:
+    name: Execute Production Build
+    needs: [commit-lint, markdown-lint]
+    runs-on: ubuntu-latest
+    environment: production
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Production Simulation
+      - name: Deployment Simulation
         run: |
           echo "-------------------------------------------------------"
           echo "🚀 STARTING PRODUCTION DEPLOYMENT"
           echo "-------------------------------------------------------"
-          echo "Target Environment: Production"
-          echo "Triggered by: ${{ github.actor }}"
-          echo "Status: In Progress..."
-          
-          # Simulate work
-          sleep 2
-          
           echo "✅ Production deployment marked as COMPLETE."
           echo "-------------------------------------------------------"
-
-      - name: Final Success Message
-        run: echo "The production workflow has finished successfully."
