@@ -1,10 +1,34 @@
-# .github/workflows/production.yaml
+name: Release Deployment
+
 on:
   workflow_call:
+    # This enables the "call" from your CI Controller
 
 jobs:
-  confirm:
+  deploy-dev:
+    name: Execute Release Build
     runs-on: ubuntu-latest
+    # This links the job to a GitHub Environment for tracking
+    environment: release
+
     steps:
-      - name: Confirm
-        run: echo "Staging deployment confirmed."
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Release Simulation
+        run: |
+          echo "-------------------------------------------------------"
+          echo "🚀 STARTING RELEASE DEPLOYMENT"
+          echo "-------------------------------------------------------"
+          echo "Target Environment: Release"
+          echo "Triggered by: ${{ github.actor }}"
+          echo "Status: In Progress..."
+          
+          # Simulate work
+          sleep 2
+          
+          echo "✅ Release deployment marked as COMPLETE."
+          echo "-------------------------------------------------------"
+
+      - name: Final Success Message
+        run: echo "The release workflow has finished successfully."
