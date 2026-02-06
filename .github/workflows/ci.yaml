@@ -1,78 +1,80 @@
-name: CI/CD Deployment Pipeline
+name: CI Controller
 
 on:
   push:
     branches:
-      - master
-      - release
-      - develop
       - 'feature/**'
+      - 'develop'
+      - 'release'
+      - 'master'
+  workflow_dispatch:
+    inputs:
+      force_env:
+        description: 'Manually override and pick an environment'
+        required: false
+        type: choice
+        options:
+          - development
+          - staging
+          - release
+          - production
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  determine-env:
-    name: Determine Environment
+  detect-env:
     runs-on: ubuntu-latest
     outputs:
-      target_env: ${{ steps.set-env.outputs.target_env }}
+      env_name: ${{ steps.branch-check.outputs.env }}
     steps:
-      - id: set-env
+      - id: branch-check
+        shell: bash
         run: |
-          if [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
-            echo "target_env=production" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.ref }}" == refs/heads/release ]]; then
-            echo "target_env=release" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
-            echo "target_env=staging" >> $GITHUB_OUTPUT
+          # 1. Check if a manual override was provided via workflow_dispatch
+          # 2. Otherwise, map the branch name to the environment
+          if [[ "${{ github.event.inputs.force_env }}" != "" ]]; then
+            ENV="${{ github.event.inputs.force_env }}"
+          elif [[ $GITHUB_REF_NAME == feature/* ]]; then
+            ENV="development"
+          elif [[ $GITHUB_REF_NAME == "develop" ]]; then
+            ENV="staging"
+          elif [[ $GITHUB_REF_NAME == "release" ]]; then
+            ENV="release"
+          elif [[ $GITHUB_REF_NAME == "master" ]]; then
+            ENV="production"
           else
-            echo "target_env=development" >> $GITHUB_OUTPUT
+            echo "::error::Branch $GITHUB_REF_NAME is not mapped to an environment."
+            exit 1
           fi
-
-  deploy:
-    name: Deploy to Environment
-    needs: determine-env
-    runs-on: ubuntu-latest
-    environment: ${{ needs.determine-env.outputs.target_env }}
-    
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Display Detected Environment
-        run: |
-          echo "------------------------------------------------"
-          echo "✅ DEPLOYMENT COMPLETE"
-          echo "Detected Branch: ${{ github.ref_name }}"
-          echo "Target Environment: ${{ needs.determine-env.outputs.target_env }}"
-          echo "------------------------------------------------"
           
-      - name: Deploy using the correct YAML file
-        run: |
-          ENV=${{ needs.determine-env.outputs.target_env }}
-          echo "🚀 Deploying to $ENV environment..."
-          case "$ENV" in
-            production)
-              echo "Using production.yaml"
-              # Add the command to deploy using production.yaml
-              # Example: kubectl apply -f production.yaml
-              ;;
-            release)
-              echo "Using release.yaml"
-              # Add the command to deploy using release.yaml
-              # Example: kubectl apply -f release.yaml
-              ;;
-            staging)
-              echo "Using staging.yaml"
-              # Add the command to deploy using staging.yaml
-              # Example: kubectl apply -f staging.yaml
-              ;;
-            development)
-              echo "Using development.yaml"
-              # Add the command to deploy using development.yaml
-              # Example: kubectl apply -f development.yaml
-              ;;
-            *)
-              echo "Unknown environment: $ENV"
-              exit 1
-              ;;
-          esac
-          echo "Deployment to $ENV completed."
+          echo "env=$ENV" >> $GITHUB_OUTPUT
+
+  # -------------------------------------------------------------------------
+  # Reusable Workflow Calls
+  # -------------------------------------------------------------------------
+
+  development-call:
+    needs: detect-env
+    if: needs.detect-env.outputs.env_name == 'development'
+    uses: ./.github/workflows/development.yaml
+    secrets: inherit
+
+  staging-call:
+    needs: detect-env
+    if: needs.detect-env.outputs.env_name == 'staging'
+    uses: ./.github/workflows/staging.yaml
+    secrets: inherit
+
+  release-call:
+    needs: detect-env
+    if: needs.detect-env.outputs.env_name == 'release'
+    uses: ./.github/workflows/release.yaml
+    secrets: inherit
+
+  production-call:
+    needs: detect-env
+    if: needs.detect-env.outputs.env_name == 'production'
+    uses: ./.github/workflows/production.yaml
+    secrets: inherit

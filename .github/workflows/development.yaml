@@ -1,10 +1,34 @@
-# .github/workflows/production.yaml
+name: Development Deployment
+
 on:
   workflow_call:
+    # This enables the "call" from your CI Controller
 
 jobs:
-  confirm:
+  deploy-dev:
+    name: Execute Development Build
     runs-on: ubuntu-latest
+    # This links the job to a GitHub Environment for tracking
+    environment: development
+
     steps:
-      - name: Confirm
-        run: echo "Development deployment confirmed."
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Deployment Simulation
+        run: |
+          echo "-------------------------------------------------------"
+          echo "🚀 STARTING DEVELOPMENT DEPLOYMENT"
+          echo "-------------------------------------------------------"
+          echo "Target Environment: Development"
+          echo "Triggered by: ${{ github.actor }}"
+          echo "Status: In Progress..."
+          
+          # Simulate work
+          sleep 2
+          
+          echo "✅ Development deployment marked as COMPLETE."
+          echo "-------------------------------------------------------"
+
+      - name: Final Success Message
+        run: echo "The development workflow has finished successfully."
