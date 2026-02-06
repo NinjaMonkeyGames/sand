@@ -2,10 +2,14 @@ name: Development Deployment
 
 on:
   workflow_call:
-    # Receives the call from CI Controller
+    inputs:
+      environment:
+        required: true
+        type: string
+        default: 'development'
 
 jobs:
-  # 1. Linting Jobs (Running in parallel)
+  # 1. Linting Jobs
   commit-lint:
     uses: ./.github/workflows/commitlint.yaml
     secrets: inherit
@@ -14,20 +18,26 @@ jobs:
     uses: ./.github/workflows/markdownlint.yaml
     secrets: inherit
 
-  # 2. Deployment Job (Wait for linting to pass)
+  # 2. Deployment Job
   deploy-development:
     name: Execute Development Build
     needs: [commit-lint, markdown-lint]
     runs-on: ubuntu-latest
-    environment: development
+    environment: ${{ inputs.environment }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Deployment Simulation
         run: |
-          echo "-------------------------------------------------------"
-          echo "🚀 STARTING DEVELOPMENT DEPLOYMENT"
-          echo "-------------------------------------------------------"
-          echo "✅ Development deployment marked as COMPLETE."
-          echo "-------------------------------------------------------"
+          echo "🚀 STARTING ${{ inputs.environment }} DEPLOYMENT"
+          echo "✅ Deployment marked as COMPLETE."
+
+  # 3. Release Job
+  semantic-release:
+    needs: [deploy-development]
+    # Passing the input to the called workflow
+    uses: ./.github/workflows/semantic-release.yaml
+    with:
+      environment: ${{ inputs.environment }}
+    secrets: inherit
