@@ -31,12 +31,3 @@ jobs:
           echo "-------------------------------------------------------"
           echo "✅ Staging deployment marked as COMPLETE."
           echo "-------------------------------------------------------"
-
-  # 3. Post-Deployment Release Job
-  post-deploy-release:
-    name: Semantic Release
-    needs: [deploy-staging]
-    uses: ./.github/workflows/semantic-release.yaml
-    with:
-      environment: staging  # Pass the string "staging" her
-    secrets: inherit
