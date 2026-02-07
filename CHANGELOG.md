@@ -1,3 +1,16 @@
+# [1.0.0-beta.5](https://github.com/NinjaMonkeyGames/sand/compare/v1.0.0-beta.4...v1.0.0-beta.5) (2026-02-07)
+
+
+### Features
+
+* **core:** fresh 0 ([e492b0c](https://github.com/NinjaMonkeyGames/sand/commit/e492b0cc06d84f419a8ed7356a4fb65a0c4fac50)), closes [#0](https://github.com/NinjaMonkeyGames/sand/issues/0)
+* **core:** full cycle 5 ([6a3d5dc](https://github.com/NinjaMonkeyGames/sand/commit/6a3d5dcf72078c8186227752a457a40b4df9752e)), closes [#0](https://github.com/NinjaMonkeyGames/sand/issues/0)
+* **core:** new cycle 3 ([6695d1c](https://github.com/NinjaMonkeyGames/sand/commit/6695d1cedb04e7ca819ee466bac5d93cbe19578b)), closes [#0](https://github.com/NinjaMonkeyGames/sand/issues/0)
+* **core:** set environment required to false 0 ([229de3a](https://github.com/NinjaMonkeyGames/sand/commit/229de3ad6ede85e0dfeb53d7599b148a8015881b)), closes [#0](https://github.com/NinjaMonkeyGames/sand/issues/0)
+* **core:** set environment required to false 5 ([7571f96](https://github.com/NinjaMonkeyGames/sand/commit/7571f96c2d24e2963dc3815f5a12ebd0c3410c01)), closes [#0](https://github.com/NinjaMonkeyGames/sand/issues/0)
+* **core:** set environment required to false 7 ([d627c39](https://github.com/NinjaMonkeyGames/sand/commit/d627c39433fa3fa6e4135f5470be94b3b152e8fa)), closes [#0](https://github.com/NinjaMonkeyGames/sand/issues/0)
+* **core:** set environment required to false 8 ([ba4e587](https://github.com/NinjaMonkeyGames/sand/commit/ba4e5877165b6e25bf99067f936e980aff16e766)), closes [#0](https://github.com/NinjaMonkeyGames/sand/issues/0)
+
 # [1.0.0-beta.4](https://github.com/NinjaMonkeyGames/sand/compare/v1.0.0-beta.3...v1.0.0-beta.4) (2026-02-06)
 
 
