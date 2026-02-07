@@ -3,8 +3,17 @@ on:
   workflow_call:
 
 jobs:
+  # Run linting jobs in parallel before the confirmation step
+  commit-lint:
+    uses: ./.github/workflows/commitlint.yaml
+
+  markdown-lint:
+    uses: ./.github/workflows/markdownlint.yaml
+
   confirm:
     runs-on: ubuntu-latest
+    # Added 'needs' to ensure linting passes before confirming deployment
+    needs: [commit-lint, markdown-lint]
     steps:
       - name: Confirm
         run: echo "Staging deployment confirmed."
