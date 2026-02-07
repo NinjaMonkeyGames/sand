@@ -14,7 +14,7 @@ jobs:
     uses: ./.github/workflows/markdownlint.yaml
     secrets: inherit
 
-  # 2. Deployment Job
+  # 2. Deployment Job (Wait for linting to pass)
   deploy-staging:
     name: Execute Staging Build
     needs: [commit-lint, markdown-lint]
@@ -31,10 +31,3 @@ jobs:
           echo "-------------------------------------------------------"
           echo "✅ Staging deployment marked as COMPLETE."
           echo "-------------------------------------------------------"
-
-  # 3. Release Job (Triggers only if lints passed)
-  release:
-    name: Semantic Release
-    needs: [commit-lint, markdown-lint]
-    uses: ./.github/workflows/semantic-release.yaml
-    secrets: inherit
