@@ -14,6 +14,10 @@ jobs:
     uses: ./.github/workflows/markdownlint.yaml
     secrets: inherit
 
+  semantic-release:
+    uses: ./.github/workflows/semantic-release.yaml
+    secrets: inherit
+
   # 2. Deployment Job (Wait for linting to pass)
   deploy-development:
     name: Execute Development Build
